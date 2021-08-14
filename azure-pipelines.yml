@@ -20,6 +20,11 @@ steps:
       command: install
       workingDir: '$(System.DefaultWorkingDirectory)'
 
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '8'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
   - task: Npm@1 # Run npm run build
     displayName: 'npm run build'
     inputs:
