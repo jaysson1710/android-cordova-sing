@@ -31,11 +31,6 @@ steps:
       command: custom
       customCommand: run build
 
-  - task: Npm@1
-    inputs:
-      command: 'custom'
-      customCommand: 'install -g @angular/cli'
-
   - script: | # Run unit tests
       npx --no-install ng test --watch=false --reporters=progress,junit
     displayName: 'ng test'
