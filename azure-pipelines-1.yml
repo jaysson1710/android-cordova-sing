@@ -39,6 +39,9 @@ steps:
       echo 'export PATH=${GRADLE_HOME}/bin:${PATH}' >> /etc/profile.d/gradle.sh
       gradle -v
 
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.x'
 
 - bash: | # Installing cordova
     sudo npm i -g cordova
