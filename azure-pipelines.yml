@@ -31,10 +31,10 @@ steps:
       command: custom
       customCommand: run build
 
-  - script: | # Run unit tests
-      npx --no-install ng test --watch=false --reporters=progress,junit
-    displayName: 'ng test'
-    continueOnError: true
+  # - script: | # Run unit tests
+  #     npx --no-install ng test --watch=false --reporters=progress,junit
+  #   displayName: 'ng test'
+  #   continueOnError: true
     
     
   - task: PublishTestResults@2 # Publish tests results
