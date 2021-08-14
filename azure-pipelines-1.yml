@@ -27,6 +27,19 @@ steps:
     targetType: 'inline'
     script: 'mv $(Build.BinariesDirectory)/www $(System.DefaultWorkingDirectory)'
 
+- task: Bash@3
+  displayName: "install gradle 7.1.1"
+  inputs:
+    targetType: 'inline'
+    script: |
+      wget https://services.gradle.org/distributions/gradle-7.1.1-bin.zip -P /tmp
+      sudo unzip -d /opt/gradle /tmp/gradle-*.zip
+      sudo touch /etc/profile.d/gradle.sh
+      echo 'export GRADLE_HOME=/opt/gradle/gradle-6.4.1'  >> /etc/profile.d/gradle.sh
+      echo 'export PATH=${GRADLE_HOME}/bin:${PATH}' >> /etc/profile.d/gradle.sh
+      gradle -v
+
+
 - bash: | # Installing cordova
     sudo npm i -g cordova
   displayName: 'npm i -g cordova@latest'
