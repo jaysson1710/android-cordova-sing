@@ -59,6 +59,7 @@ steps:
     apksignerKeystoreFile: 'apptest.keystore'
     apksignerKeystoreAlias: 'apptest'
     apksignerKeyPassword: 'maestro1.'
+    apksignerKeystorePassword: 'maestro1.'
 
 
 - task: CopyFiles@2 # Copies all .apk files to publish
