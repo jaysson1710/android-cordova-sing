@@ -49,41 +49,7 @@ steps:
       testResultsFormat: 'JUnit'
       testResultsFiles: '**/TESTS-*.xml'
 
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: 'sdk install gradle 7.1.1'
-
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: 'sudo npm i -g cordova'
-    
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: 'npx ionic cordova build android --no-build --release'
-      workingDirectory: 'www/'
-
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: 'sudo apt-get install lib32z1'
-  - task: AndroidSigning@3
-    inputs:
-      apkFiles: '**/*.apk'
-      apksignerKeystoreFile: 'apptest.keystore'
-      apksignerKeystoreAlias: 'apptest'
-      apksignerKeyPassword: 'Maestro1.'
-  - task: CopyFiles@2 # Copies all .apk files to publish
-    displayName: 'copy '
-    inputs:
-      SourceFolder: '$(System.DefaultWorkingDirectory)'
-      Contents: '**/outputs/apk/release/app*.apk'
-      CleanTargetFolder: true
-      TargetFolder: '$(Build.BinariesDirectory)'
-      flattenFolders: true
-    
+  
   - publish: 'www/' # Publish App artifact
-    artifact: '$(Build.BinariesDirectory)'
+    artifact: 'www'
     displayName: 'Publishing Artifact'
