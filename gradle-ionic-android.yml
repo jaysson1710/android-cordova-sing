@@ -1,0 +1,75 @@
+trigger:
+  branches:
+    include:
+    - refs/heads/develop
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/develop
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    vmImage: ubuntu-18.04
+  steps:
+  - checkout: self
+  - task: Bash@3
+    displayName: Bash Script
+    inputs:
+      targetType: inline
+      script: "npm install \nnpm run build\nnpm install -g @ionic/cli\nionic capacitor sync android\n"
+  - task: Bash@3
+    displayName: Bash Script copy
+    inputs:
+      targetType: inline
+      script: >
+        chmod 777 ./gradlew
+
+
+        ./gradlew build
+      workingDirectory: android
+  - task: Gradle@2
+    displayName: gradlew build
+    enabled: False
+    inputs:
+      wrapperScript: android/gradlew
+      cwd: android
+      publishJUnitResults: false
+  - task: AndroidSigning@3
+    displayName: Signing and aligning APK file(s) **/release/*.apk
+    inputs:
+      files: '**/release/*.apk'
+      keystoreFile: 758446ef-c99b-4a07-92f7-a3f5227ef8ff
+      keystorePass: maestro1.
+      keystoreAlias: apptitan
+      keyPass: maestro1.
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    condition: succeededOrFailed()
+    inputs:
+      SourceFolder: $(system.defaultworkingdirectory)
+      Contents: '**/release/*.apk'
+      TargetFolder: $(build.artifactstagingdirectory)
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+    condition: succeededOrFailed()
+    inputs:
+      PathtoPublish: $(build.artifactstagingdirectory)
+  - task: AppCenterTest@1
+    displayName: Test with Visual Studio App Center
+    condition: succeededOrFailed()
+    enabled: False
+    inputs:
+      app: '**/*.apk'
+  - task: AppCenterDistribute@2
+    displayName: Deploy **/release/*.apk to Visual Studio App Center
+    condition: succeededOrFailed()
+    inputs:
+      serverEndpoint: b88c3834-c28d-4ca7-a26a-f5f1708d2a4f
+      appSlug: jaysson.avendano-grantitan.com/apptitan
+      app: '**/release/*.apk'
+      packParentFolder: false
+      releaseNotesInput: .
+...

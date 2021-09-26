@@ -1,0 +1,81 @@
+##demoionic-gradle-andriod-sing
+
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+    
+- task: DownloadPipelineArtifact@2
+  inputs:
+    buildType: 'specific'
+    project: '2c56efb1-2ee3-47ac-89c3-8f945274c695'
+    definition: '18'
+    buildVersionToDownload: 'latest'
+    allowPartiallySucceededBuilds: true
+    targetPath: '$(Build.BinariesDirectory)'
+
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '8'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'mv $(Build.BinariesDirectory)/www $(System.DefaultWorkingDirectory)'
+
+- task: Bash@3
+  displayName: "install gradle 7.1.1"
+  inputs:
+    targetType: 'inline'
+    script: |
+      wget https://services.gradle.org/distributions/gradle-7.1.1-bin.zip -P /tmp
+      sudo unzip -d /opt/gradle /tmp/gradle-*.zip
+      sudo touch /etc/profile.d/gradle.sh
+      echo 'export GRADLE_HOME=/opt/gradle/gradle-6.4.1'  >> /etc/profile.d/gradle.sh
+      echo 'export PATH=${GRADLE_HOME}/bin:${PATH}' >> /etc/profile.d/gradle.sh
+      gradle -v
+
+
+- bash: | # Installing cordova
+    sudo npm i -g cordova@9.0.0
+  displayName: 'npm i -g cordova@latest'
+
+- bash: | # Build android App using cordova
+    npx ionic cordova build android --no-build --release --minSdkVersion=21
+  displayName: 'ionic cordova build android --no-build --release'
+
+# Needed to solve missing dependency problem, see the troubleshooting topic
+- bash: |
+    sudo apt-get install lib32z1
+  displayName: 'sudo apt-get install lib32z1'
+
+- task: AndroidSigning@3
+  inputs:
+    apkFiles: '**/*.apk'
+    apksignerKeystoreFile: 'apptest.keystore'
+    apksignerKeystoreAlias: 'apptest'
+    apksignerKeyPassword: 'maestro1.'
+    apksignerKeystorePassword: 'maestro1.'
+
+
+- task: CopyFiles@2 # Copies all .apk files to publish
+  displayName: 'copy **/outputs/apk/release/app*.apk to $(Build.BinariesDirectory)'
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: '**/outputs/apk/release/app*.apk'
+    CleanTargetFolder: true
+    TargetFolder: '$(Build.BinariesDirectory)'
+    flattenFolders: true
+
+
+- publish: '$(Build.BinariesDirectory)' # Publish artifact
+  artifact: 'android-app'
+  displayName: 'publish artifact'
+
+
