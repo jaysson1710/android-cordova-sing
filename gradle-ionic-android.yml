@@ -42,8 +42,8 @@ jobs:
     inputs:
       files: '**/release/*.apk'
       keystoreFile: 758446ef-c99b-4a07-92f7-a3f5227ef8ff
-      keystorePass: maestro1.
-      keystoreAlias: apptitan
+      keystorePass: xxxx
+      keystoreAlias: app
       keyPass: maestro1.
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
@@ -68,7 +68,7 @@ jobs:
     condition: succeededOrFailed()
     inputs:
       serverEndpoint: b88c3834-c28d-4ca7-a26a-f5f1708d2a4f
-      appSlug: jaysson.avendano-grantitan.com/apptitan
+      appSlug: jaysson.xxxxx-xxxxxx.com/app
       app: '**/release/*.apk'
       packParentFolder: false
       releaseNotesInput: .
