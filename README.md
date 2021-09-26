@@ -5,6 +5,9 @@ TODO: Give a short introduction of your project. Let this section explain the ob
 
 https://dev.to/carlosgit2016/creating-building-and-deploying-an-ionic-application-using-azure-devops-and-app-center-1bhj
 
+Se adicionan los archivos con ejemplos de compilacion
 
-
-
+demoionic-gradle-andriod-sing.yaml
+demoionic-gradle-cordova.yaml
+gradle-ionic-android.yml
+pipelines-android.yaml
